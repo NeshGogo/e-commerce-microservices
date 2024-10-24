@@ -9,6 +9,8 @@ internal class InMemoryBasketStore : IBasketStore
     public void CreateCustomerBasket(CustomerBasket customerBasket) =>
         Basket[customerBasket.CustomerId] = customerBasket;
 
+    public void DeleteCustomerBasket(string customerId) => Basket.Remove(customerId);
+
     public CustomerBasket GetBasketByCustomerId(string customerId) =>
         Basket.TryGetValue(customerId, out var customer) ? customer
         : new CustomerBasket { CustomerId = customerId };
