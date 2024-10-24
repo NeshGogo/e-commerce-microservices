@@ -43,5 +43,16 @@ public static class BasketApiEndpoints
 
             return TypedResults.NoContent();
         });
+
+        app.MapDelete("{customerId}/{productId}", (IBasketStore basketStore, string customerId, string productId) =>
+        {
+            var customerBasket = basketStore.GetBasketByCustomerId(customerId);
+
+            customerBasket.RemoveBasketProduct(productId);
+
+            basketStore.UpdateCustomerBasket(customerBasket);
+
+            return TypedResults.NoContent();
+        });
     }
 }
