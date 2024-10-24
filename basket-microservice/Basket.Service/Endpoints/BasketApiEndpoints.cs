@@ -27,5 +27,21 @@ public static class BasketApiEndpoints
 
             return TypedResults.Created();
         });
+
+        app.MapPut("{customerId}", (IBasketStore basketStore, string customerId,
+            AddBasketProductRequest addBasketProductRequest) =>
+        {
+            var customerBasket = basketStore.GetBasketByCustomerId(customerId);
+
+            customerBasket.AddBasketProduct(new BasketProduct(
+                 addBasketProductRequest.ProductId,
+                 addBasketProductRequest.ProductName,
+                 addBasketProductRequest.Quantity
+            ));
+
+            basketStore.UpdateCustomerBasket(customerBasket);
+
+            return TypedResults.NoContent();
+        });
     }
 }

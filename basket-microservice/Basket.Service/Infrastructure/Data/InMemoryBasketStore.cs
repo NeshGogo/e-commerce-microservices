@@ -9,8 +9,19 @@ internal class InMemoryBasketStore : IBasketStore
     public void CreateCustomerBasket(CustomerBasket customerBasket) =>
         Basket[customerBasket.CustomerId] = customerBasket;
 
-    public CustomerBasket GetBasketByCustomerId(string customerId) => 
-        Basket.TryGetValue(customerId, out var customer) ? customer 
+    public CustomerBasket GetBasketByCustomerId(string customerId) =>
+        Basket.TryGetValue(customerId, out var customer) ? customer
         : new CustomerBasket { CustomerId = customerId };
 
+    public void UpdateCustomerBasket(CustomerBasket customerBasket)
+    {
+        if (Basket.TryGetValue(customerBasket.CustomerId, out _))
+        {
+            Basket[customerBasket.CustomerId] = customerBasket;
+        }
+        else
+        {
+            CreateCustomerBasket(customerBasket);
+        }
+    }
 }
