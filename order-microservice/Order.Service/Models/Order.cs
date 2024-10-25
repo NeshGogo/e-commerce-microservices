@@ -9,10 +9,10 @@ internal class Order
     public Guid OrderId { get; private set; }
     public DateTime OrderDate { get; private set; }
 
-    public Order(Guid orderId, DateTime orderDate)
+    public Order()
     {
-        OrderDate = orderDate;
-        OrderId = orderId;
+        OrderDate = DateTime.UtcNow;
+        OrderId = Guid.NewGuid();
     }
 
     public void AddOrderProduct(string productId, int quantity)
