@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ECommerce.Shared.Infrastructure.EventBus.Abstractions;
+using Microsoft.AspNetCore.Mvc;
 using Order.Service.ApiModels;
 using Order.Service.Infrastructure.Data;
-using Order.Service.Infrastructure.EventBus.Abstractions;
 using Order.Service.IntegrationEvents.Events;
 
 namespace Order.Service.Endpoints;
@@ -24,7 +24,7 @@ public static class OrderApiEndpoint
             {
                 order.AddOrderProduct(product.ProductId, product.Quantity);
             }
-            
+
             orderStore.CreateOrder(order);
 
             eventBus.PublishAsync(new OrderCreatedEvent(customerId));

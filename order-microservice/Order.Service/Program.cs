@@ -1,6 +1,6 @@
+using ECommerce.Shared.Infrastructure.RabbitMq;
 using Order.Service.Endpoints;
 using Order.Service.Infrastructure.Data;
-using Order.Service.Infrastructure.RabbitMq;
 
 var builder = WebApplication.CreateBuilder(args);
 
