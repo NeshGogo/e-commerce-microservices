@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IOrderStore, InMemoryOrderStore>();
 builder.Services.AddRabbitMqEventBus(builder.Configuration);
+builder.Services.AddRabbitMqEventPublisher();
 
 var app = builder.Build();
 

@@ -7,7 +7,7 @@ public class RabbitMqConnection : IDisposable, IRabbitMqConnection
     private IConnection? _connection;
     private readonly RabbitMqOptions _options;
 
-    public IConnection Connection => throw new NotImplementedException();
+    public IConnection Connection => _connection!;
 
     public RabbitMqConnection(RabbitMqOptions options)
     {

@@ -1,9 +1,9 @@
 ﻿
 using Basket.Service.Infrastructure.Data;
 using Basket.Service.IntegrationEvents;
+using ECommerce.Shared.Infrastructure.RabbitMq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
 using System.Text;
 using System.Text.Json;
 
@@ -61,7 +61,7 @@ public class RabbitMqHostedService : IHostedService
                 exchange: ExchangeName,
                 routingKey: string.Empty);
 
-        }, 
+        },
         TaskCreationOptions.LongRunning);
 
         return Task.CompletedTask;
