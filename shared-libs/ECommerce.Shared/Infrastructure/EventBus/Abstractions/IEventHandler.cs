@@ -3,7 +3,7 @@
 
 public interface IEventHandler<in TEvent> : IEventHandler where TEvent : Event
 {
-    Task Handler(TEvent @event);
+    Task Handle(TEvent @event);
     Task IEventHandler.Handle(Event @event) => Handle((TEvent)@event);
 }
 

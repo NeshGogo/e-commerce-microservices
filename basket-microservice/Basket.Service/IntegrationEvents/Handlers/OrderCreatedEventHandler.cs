@@ -9,7 +9,7 @@ internal class OrderCreatedEventHandler : IEventHandler<OrderCreatedEvent>
 
     public OrderCreatedEventHandler(IBasketStore basketStore) => _basketStore = basketStore;
 
-    public Task Handler(OrderCreatedEvent @event)
+    public Task Handle(OrderCreatedEvent @event)
     {
         _basketStore.DeleteCustomerBasket(@event.CustomerId);
         
