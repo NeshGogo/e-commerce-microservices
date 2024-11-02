@@ -14,6 +14,8 @@ public class RabbitMqEventBus : IEventBus
     }
     public Task PublishAsync(Event @event)
     {
+        var routingKey = @event.GetType().Name;
+
         using var channel = _rabbitMqConnection.Connection.CreateModel();
         channel.ExchangeDeclare(
             exchange: ExchangeName,
@@ -21,13 +23,16 @@ public class RabbitMqEventBus : IEventBus
             durable: false,
             autoDelete: false,
             null);
+       
         var body = JsonSerializer.SerializeToUtf8Bytes(@event, @event.GetType());
+        
         channel.BasicPublish(
             exchange: ExchangeName,
-            routingKey: string.Empty,
+            routingKey: routingKey,
             mandatory: false,
             basicProperties: null,
             body: body);
+       
         return Task.CompletedTask;
     }
 }
