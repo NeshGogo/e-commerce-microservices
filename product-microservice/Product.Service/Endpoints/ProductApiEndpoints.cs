@@ -1,5 +1,7 @@
-﻿using Product.Service.ApiModels;
+﻿using ECommerce.Shared.Infrastructure.EventBus.Abstractions;
+using Product.Service.ApiModels;
 using Product.Service.Infrastructure.Data;
+using Product.Service.IntegrationEvents;
 
 namespace Product.Service.Endpoints;
 
@@ -29,6 +31,31 @@ public static class ProductApiEndpoints
             await productStore.CreateProduct(product);
 
             return TypedResults.Created(product.Id.ToString());
+        });
+
+        endpoint.MapPut("{productId}", async Task<IResult> (IProductStore productStore, IEventBus eventBus,
+            int productId, UpdateProductRequest request) =>
+        {
+            var product = await productStore.GetByIdAsync(productId);
+
+            if (product is null)
+                return TypedResults.NotFound($"Product with id {productId} does not exist");
+
+            var existingPrice = product.Price;
+
+            product.Name = request.Name;
+            product.Price = request.Price;
+            product.Description = request.Description;
+            product.ProductTypeId = request.ProductTypeId;
+
+            await productStore.UpdateProduct(product);
+
+            if(decimal.Equals(existingPrice, request.Price))
+            {
+                await eventBus.PublishAsync(new ProductPriceUpdatedEvent(productId, request.Price));
+            }
+
+            return TypedResults.NoContent();
         });
     }
 }
