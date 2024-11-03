@@ -1,4 +1,5 @@
-﻿using Product.Service.Infrastructure.Data;
+﻿using Product.Service.ApiModels;
+using Product.Service.Infrastructure.Data;
 
 namespace Product.Service.Endpoints;
 
@@ -13,6 +14,21 @@ public static class ProductApiEndpoints
             return product is null 
                 ? TypedResults.NotFound("Product not found")
                 : TypedResults.Ok(product);
+        });
+
+        endpoint.MapPost("", async (IProductStore productStore, CreateProductRequest request) =>
+        {
+            var product = new Models.Product
+            {
+                Name = request.Name,
+                Price = request.Price,
+                Description = request.Description,
+                ProductTypeId = request.ProductTypeId
+            };
+
+            await productStore.CreateProduct(product);
+
+            return TypedResults.Created(product.Id.ToString());
         });
     }
 }
