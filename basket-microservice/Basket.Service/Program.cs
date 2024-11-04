@@ -1,5 +1,6 @@
 using Basket.Service.Endpoints;
 using Basket.Service.Infrastructure.Data;
+using Basket.Service.Infrastructure.Redis;
 using Basket.Service.IntegrationEvents;
 using Basket.Service.IntegrationEvents.Handlers;
 using ECommerce.Shared.Infrastructure.EventBus;
@@ -12,6 +13,8 @@ builder.Services.AddRabbitMqEventBus(builder.Configuration)
                 .AddRabbitMqSubscriberService(builder.Configuration)
                 .AddEventHandler<OrderCreatedEvent, OrderCreatedEventHandler>()
                 .AddEventHandler<ProductPriceUpdatedEvent, ProductPriceUpdatedEventHandler>();
+
+builder.Services.AddRedisCache(builder.Configuration);
 
 var app = builder.Build();
 
