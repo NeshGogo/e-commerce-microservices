@@ -2,6 +2,7 @@
 using Basket.Service.Infrastructure.Data;
 using Basket.Service.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Basket.Service.Endpoints;
 
@@ -13,14 +14,17 @@ public static class BasketApiEndpoints
             (string customerId, [FromServices] IBasketStore basketStore) =>
             basketStore.GetBasketByCustomerId(customerId));
 
-        app.MapPost("{customerId}", (IBasketStore basketStore, string customerId,
+        app.MapPost("{customerId}", async (IBasketStore basketStore, IDistributedCache cache, string customerId,
             CreateBasketRequest createBasketRequest) =>
         {
             var customerBasket = new CustomerBasket { CustomerId = customerId };
 
+            var cachedProductPrice = decimal.Parse(await cache.GetStringAsync(createBasketRequest.ProductId));
+
             customerBasket.AddBasketProduct(new BasketProduct(
                  createBasketRequest.ProductId,
-                 createBasketRequest.ProductName
+                 createBasketRequest.ProductName,
+                 cachedProductPrice
             ));
 
             basketStore.CreateCustomerBasket(customerBasket);
@@ -28,14 +32,17 @@ public static class BasketApiEndpoints
             return TypedResults.Created();
         });
 
-        app.MapPut("{customerId}", (IBasketStore basketStore, string customerId,
+        app.MapPut("{customerId}", async (IBasketStore basketStore, IDistributedCache cache, string customerId,
             AddBasketProductRequest addBasketProductRequest) =>
         {
             var customerBasket = basketStore.GetBasketByCustomerId(customerId);
 
+            var cachedProductPrice = decimal.Parse(await cache.GetStringAsync(addBasketProductRequest.ProductId));
+
             customerBasket.AddBasketProduct(new BasketProduct(
                  addBasketProductRequest.ProductId,
                  addBasketProductRequest.ProductName,
+                 cachedProductPrice,
                  addBasketProductRequest.Quantity
             ));
 
