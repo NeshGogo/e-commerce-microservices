@@ -15,7 +15,12 @@ public static class ProductApiEndpoints
 
             return product is null 
                 ? TypedResults.NotFound("Product not found")
-                : TypedResults.Ok(product);
+                : TypedResults.Ok(new GetProductResponse(
+                    product.Id,
+                    product.Name, 
+                    product.Price, 
+                    product.ProductType?.Type, 
+                    product.Description));
         });
 
         endpoint.MapPost("", async (IProductStore productStore, CreateProductRequest request) =>

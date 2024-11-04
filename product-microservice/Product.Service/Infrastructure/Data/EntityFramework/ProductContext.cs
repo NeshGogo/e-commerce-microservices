@@ -20,7 +20,8 @@ internal class ProductContext : DbContext, IProductStore
         await SaveChangesAsync();
     }
 
-    public async Task<Models.Product> GetByIdAsync(int id) => await FindAsync<Models.Product>(id);
+    public async Task<Models.Product?> GetByIdAsync(int id) =>
+        await Products.Include(p => p.ProductType).FirstOrDefaultAsync(p => p.Id == id);
 
     public async Task UpdateProduct(Models.Product product)
     {
