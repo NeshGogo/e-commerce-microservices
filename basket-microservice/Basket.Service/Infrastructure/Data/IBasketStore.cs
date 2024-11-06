@@ -4,8 +4,8 @@ namespace Basket.Service.Infrastructure.Data;
 
 internal interface IBasketStore
 {
-    CustomerBasket GetBasketByCustomerId(string customerId);
-    void CreateCustomerBasket(CustomerBasket customerBasket);
-    void UpdateCustomerBasket(CustomerBasket customerBasket);
-    void DeleteCustomerBasket(string customerId);
+    Task<CustomerBasket> GetBasketByCustomerIdAsync(string customerId);
+    Task CreateCustomerBasketAsync(CustomerBasket customerBasket);
+    Task UpdateCustomerBasketAsync(CustomerBasket customerBasket);
+    Task DeleteCustomerBasketAsync(string customerId);
 }

@@ -11,7 +11,7 @@ internal class OrderCreatedEventHandler : IEventHandler<OrderCreatedEvent>
 
     public Task Handle(OrderCreatedEvent @event)
     {
-        _basketStore.DeleteCustomerBasket(@event.CustomerId);
+        _basketStore.DeleteCustomerBasketAsync(@event.CustomerId);
         
         return Task.CompletedTask;
     }

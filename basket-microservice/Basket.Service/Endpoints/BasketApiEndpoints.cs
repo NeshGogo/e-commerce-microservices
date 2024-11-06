@@ -10,9 +10,8 @@ public static class BasketApiEndpoints
 {
     public static void RegisterEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("{customerId}",
-            (string customerId, [FromServices] IBasketStore basketStore) =>
-            basketStore.GetBasketByCustomerId(customerId));
+        app.MapGet("{customerId}", async (string customerId, [FromServices] IBasketStore basketStore) =>
+                await basketStore.GetBasketByCustomerIdAsync(customerId));
 
         app.MapPost("{customerId}", async (IBasketStore basketStore, IDistributedCache cache, string customerId,
             CreateBasketRequest createBasketRequest) =>
@@ -27,7 +26,7 @@ public static class BasketApiEndpoints
                  cachedProductPrice
             ));
 
-            basketStore.CreateCustomerBasket(customerBasket);
+           await basketStore.CreateCustomerBasketAsync(customerBasket);
 
             return TypedResults.Created();
         });
@@ -35,7 +34,7 @@ public static class BasketApiEndpoints
         app.MapPut("{customerId}", async (IBasketStore basketStore, IDistributedCache cache, string customerId,
             AddBasketProductRequest addBasketProductRequest) =>
         {
-            var customerBasket = basketStore.GetBasketByCustomerId(customerId);
+            var customerBasket = await basketStore.GetBasketByCustomerIdAsync(customerId);
 
             var cachedProductPrice = decimal.Parse(await cache.GetStringAsync(addBasketProductRequest.ProductId));
 
@@ -46,25 +45,25 @@ public static class BasketApiEndpoints
                  addBasketProductRequest.Quantity
             ));
 
-            basketStore.UpdateCustomerBasket(customerBasket);
+            await basketStore.UpdateCustomerBasketAsync(customerBasket);
 
             return TypedResults.NoContent();
         });
 
-        app.MapDelete("{customerId}/{productId}", (IBasketStore basketStore, string customerId, string productId) =>
+        app.MapDelete("{customerId}/{productId}", async (IBasketStore basketStore, string customerId, string productId) =>
         {
-            var customerBasket = basketStore.GetBasketByCustomerId(customerId);
+            var customerBasket = await basketStore.GetBasketByCustomerIdAsync(customerId);
 
             customerBasket.RemoveBasketProduct(productId);
 
-            basketStore.UpdateCustomerBasket(customerBasket);
+            basketStore.UpdateCustomerBasketAsync(customerBasket);
 
             return TypedResults.NoContent();
         });
 
-        app.MapDelete("{customerId}", (IBasketStore basketStore, string customerId) =>
+        app.MapDelete("{customerId}", async (IBasketStore basketStore, string customerId) =>
         {
-            basketStore.DeleteCustomerBasket(customerId);
+            await basketStore.DeleteCustomerBasketAsync(customerId);
 
             return TypedResults.NoContent();
         });
