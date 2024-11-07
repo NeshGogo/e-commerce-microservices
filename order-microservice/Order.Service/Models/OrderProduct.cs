@@ -5,6 +5,8 @@ internal class OrderProduct
     public required string ProductId { get; init; }
     public int Quantity { get; private set; }
 
+    public Guid OrderId { get; set; }
+
     public void AddQuantity(int quantity)
     {
         Quantity += quantity;

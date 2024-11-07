@@ -4,6 +4,6 @@ namespace Order.Service.Infrastructure.Data;
 
 internal interface IOrderStore
 {
-    void CreateOrder(Models.Order order);
-    Models.Order? GetCustomerOrderById(string customerId, string orderId);
+    Task CreateOrderAsync(Models.Order order);
+    Task<Models.Order?> GetCustomerOrderByIdAsync(string customerId, string orderId);
 }
