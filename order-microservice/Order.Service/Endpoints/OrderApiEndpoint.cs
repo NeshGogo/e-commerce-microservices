@@ -18,7 +18,8 @@ public static class OrderApiEndpoint
         {
             var order = new Models.Order
             {
-                CustomerId = customerId
+                CustomerId = customerId,
+                OrderProducts = [],
             };
             foreach (var product in request.OrderProducts)
             {
