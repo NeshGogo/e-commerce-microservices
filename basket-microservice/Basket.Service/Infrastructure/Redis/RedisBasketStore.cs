@@ -27,7 +27,7 @@ internal class RedisBasketStore : IBasketStore
         await _cache.SetStringAsync(customerBasket.CustomerId, serializedBasketProducts, _cacheEntryOptions);
     }
 
-    public async Task DeleteCustomerBasketAsync(string customerId) => await _cache.RefreshAsync(customerId);
+    public async Task DeleteCustomerBasketAsync(string customerId) => await _cache.RemoveAsync(customerId);
 
     public async Task<CustomerBasket> GetBasketByCustomerIdAsync(string customerId)
     {
