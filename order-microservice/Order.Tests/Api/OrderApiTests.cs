@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Order.Service.ApiModels;
+using Order.Service.IntegrationEvents.Events;
 
 namespace Order.Tests.Api;
 
@@ -55,5 +56,23 @@ public class OrderApiTests : IntegrationTestBase
                 p.CustomerId == customerId);
 
         Assert.NotNull(order);
+    }
+
+    [Fact]
+    public async Task CreateOrder_WhenCalled_ThenOrderCreatedEventPublished()
+    {
+        const string customerId = "1";
+        var createOrderRequest = new CreateOrderRequest([]);
+        Subscribe<OrderCreatedEvent>();
+
+        var response = await HttpClient.PostAsJsonAsync($"/{customerId}", createOrderRequest);
+
+        response.EnsureSuccessStatusCode();
+
+        Assert.NotEmpty(ReceivedEvents);
+        var receivedEvent = ReceivedEvents.First();
+
+        Assert.IsType<OrderCreatedEvent>(receivedEvent);
+        Assert.Equal((receivedEvent as OrderCreatedEvent).CustomerId, customerId);
     }
 }
