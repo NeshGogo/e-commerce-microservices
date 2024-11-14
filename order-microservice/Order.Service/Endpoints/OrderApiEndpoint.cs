@@ -41,7 +41,8 @@ public static class OrderApiEndpoint
             var order = await orderStore.GetCustomerOrderByIdAsync(customerId, orderId);
             return order is null
               ? TypedResults.NotFound("Order not found for customer")
-              : TypedResults.Ok(order);
+              : TypedResults.Ok(new GetOrderResponse(order.CustomerId, order.OrderId, order.OrderDate,
+                order.OrderProducts.Select(op => new GetOrderProductResponse(op.ProductId, op.Quantity)).ToList()));
         });
 
     }
