@@ -34,4 +34,26 @@ public class OrderApiTests : IntegrationTestBase
         Assert.NotNull(getOrderResponse);
         Assert.Equal(order.OrderId, getOrderResponse.OrderId);
     }
+
+    [Fact]
+    public async Task CreateOrder_WhenCalled_ThenCreatesOrder()
+    {
+        var createOrderRequest = new CreateOrderRequest([]);
+
+        var response = await HttpClient.PostAsJsonAsync("/1", createOrderRequest);
+
+        response.EnsureSuccessStatusCode();
+
+        var locationHeader = response.Headers.Location;
+
+        Assert.NotNull(locationHeader);
+        var split = locationHeader.ToString().Split('/');
+        var customerId = split[0];
+        var orderId = split[1];
+
+        var order = OrderContext.Orders.FirstOrDefault(p => p.OrderId == Guid.Parse(orderId) && 
+                p.CustomerId == customerId);
+
+        Assert.NotNull(order);
+    }
 }
