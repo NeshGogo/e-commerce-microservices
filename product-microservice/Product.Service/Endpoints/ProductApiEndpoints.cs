@@ -55,7 +55,7 @@ public static class ProductApiEndpoints
 
             await productStore.UpdateProduct(product);
 
-            if(decimal.Equals(existingPrice, request.Price))
+            if(!decimal.Equals(existingPrice, request.Price))
             {
                 await eventBus.PublishAsync(new ProductPriceUpdatedEvent(productId, request.Price));
             }
