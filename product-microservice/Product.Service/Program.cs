@@ -18,3 +18,5 @@ if (app.Environment.IsDevelopment())
 app.RegisterEndpoints();
 
 app.Run();
+
+public partial class Program { }
