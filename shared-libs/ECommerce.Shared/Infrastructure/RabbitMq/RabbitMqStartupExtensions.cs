@@ -12,6 +12,7 @@ public static class RabbitMqStartupExtensions
         configuration.GetSection(RabbitMqOptions.RabbitMqSectionName).Bind(options);
         
         services.AddSingleton<IRabbitMqConnection>(new RabbitMqConnection(options));
+        services.AddSingleton<RabbitMqTelemetry>();
 
         return services;
     }
