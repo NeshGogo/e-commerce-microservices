@@ -7,14 +7,22 @@ namespace ECommerce.Shared.Observability;
 
 public static class OpenTelemetryStartupExtensions
 {
-    public static OpenTelemetryBuilder AddOpenTelemetryTracing(this IServiceCollection services, string serviceName) 
-        =>  services.AddOpenTelemetry()
-                    .ConfigureResource(r => 
+    public static OpenTelemetryBuilder AddOpenTelemetryTracing(
+        this IServiceCollection services,
+        string serviceName,
+        Action<TracerProviderBuilder>? customTracing = null) =>
+            services.AddOpenTelemetry()
+                    .ConfigureResource(r =>
                         r.AddService(serviceName))
-                          .WithTracing(builder =>
-                          {
-                              builder
-                                .AddConsoleExporter()
-                                .AddAspNetCoreInstrumentation();
-                          });
+                         .WithTracing(builder =>
+                         {
+                             builder
+                                 .AddConsoleExporter()
+                                 .AddAspNetCoreInstrumentation();
+
+                             customTracing?.Invoke(builder);
+                         });
+
+    public static TracerProviderBuilder WithSqlInstrumentation(this TracerProviderBuilder builder) =>
+        builder.AddSqlClientInstrumentation();
 }
