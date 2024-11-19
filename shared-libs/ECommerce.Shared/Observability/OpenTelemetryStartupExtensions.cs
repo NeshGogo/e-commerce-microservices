@@ -1,6 +1,8 @@
 ﻿using ECommerce.Shared.Infrastructure.RabbitMq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -11,8 +13,13 @@ public static class OpenTelemetryStartupExtensions
     public static OpenTelemetryBuilder AddOpenTelemetryTracing(
         this IServiceCollection services,
         string serviceName,
-        Action<TracerProviderBuilder>? customTracing = null) =>
-            services.AddOpenTelemetry()
+        IConfigurationManager configuration,
+        Action<TracerProviderBuilder>? customTracing = null)
+    {
+        OpenTelemetryOptions openTelemetryOptions = new();
+        configuration.GetSection(OpenTelemetryOptions.OpenTelemetrySectionName).Bind(openTelemetryOptions);
+
+        return services.AddOpenTelemetry()
                     .ConfigureResource(r =>
                         r.AddService(serviceName))
                          .WithTracing(builder =>
@@ -20,10 +27,16 @@ public static class OpenTelemetryStartupExtensions
                              builder
                                  .AddConsoleExporter()
                                  .AddAspNetCoreInstrumentation()
-                                 .AddSource(RabbitMqTelemetry.ActivitySourceName);
+                                 .AddSource(RabbitMqTelemetry.ActivitySourceName)
+                                 .AddOtlpExporter(options =>
+                                 {
+                                     options.Endpoint = new Uri(openTelemetryOptions.OtlpExporterEndpoint);
+                                 });
 
                              customTracing?.Invoke(builder);
                          });
+    }
+
 
     public static TracerProviderBuilder WithSqlInstrumentation(this TracerProviderBuilder builder) =>
         builder.AddSqlClientInstrumentation();
