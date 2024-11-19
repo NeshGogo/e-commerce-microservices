@@ -7,6 +7,9 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
 using System.Text;
+using System.Diagnostics;
+using OpenTelemetry.Context.Propagation;
+using ECommerce.Shared.Observability;
 
 namespace ECommerce.Shared.Infrastructure.RabbitMq;
 
@@ -17,15 +20,19 @@ public class RabbitMqHostedService : IHostedService
     private readonly IServiceProvider _serviceProvider;
     private readonly EventHandlerRegistration _handlerRegistration;
     private readonly EventBusOptions _eventBusOptions;
+    private readonly ActivitySource _activitySource;
+    private readonly TextMapPropagator _propagator = Propagators.DefaultTextMapPropagator;
 
     public RabbitMqHostedService(
         IServiceProvider serviceProvider, 
         IOptions<EventHandlerRegistration> handlerRegistrations, 
-        IOptions<EventBusOptions> eventBusOptions)
+        IOptions<EventBusOptions> eventBusOptions,
+        RabbitMqTelemetry rabbitMqTelemetry)
     {
         _serviceProvider = serviceProvider;
         _handlerRegistration = handlerRegistrations.Value;
         _eventBusOptions = eventBusOptions.Value;
+        _activitySource = rabbitMqTelemetry.ActivitySource;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -78,8 +85,29 @@ public class RabbitMqHostedService : IHostedService
 
     private void OnMessageReceived(object? sender, BasicDeliverEventArgs eventArgs)
     {
+        var parentContext = _propagator.Extract(default, eventArgs.BasicProperties,
+            (properties, key) =>
+            {
+                if(properties.Headers.TryGetValue(key, out var value))
+                {
+                    var bytes = value as byte[];
+                    return [Encoding.UTF8.GetString(bytes)];
+                }
+
+                return [];
+            });
+
+        var activityName = $"{OpentelemetryMessagingConventions.ReceiveOperation} {eventArgs.RoutingKey}";
+
+        using var activity = _activitySource.StartActivity(activityName, ActivityKind.Client, 
+            parentContext.ActivityContext);
+
+        SetActivityContext(activity, eventArgs.RoutingKey, OpentelemetryMessagingConventions.ReceiveOperation);
+
         var eventName = eventArgs.RoutingKey;
         var message = Encoding.UTF8.GetString(eventArgs.Body.Span);
+
+        activity?.SetTag("message", message);
 
         using var scope = _serviceProvider.CreateScope();
 
@@ -94,6 +122,15 @@ public class RabbitMqHostedService : IHostedService
         {
             handler.Handle(@event);
         }
+    }
+
+    private static void SetActivityContext(Activity? activity, string routingKey, string operation)
+    {
+        if (activity == null) return;
+
+        activity.SetTag(OpentelemetryMessagingConventions.System, "rabbitmq");
+        activity.SetTag(OpentelemetryMessagingConventions.OperationName, operation);
+        activity.SetTag(OpentelemetryMessagingConventions.DestinationName, routingKey);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
