@@ -5,6 +5,7 @@ using Basket.Service.IntegrationEvents;
 using Basket.Service.IntegrationEvents.Handlers;
 using ECommerce.Shared.Infrastructure.EventBus;
 using ECommerce.Shared.Infrastructure.RabbitMq;
+using ECommerce.Shared.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddRabbitMqEventBus(builder.Configuration)
                 .AddRabbitMqSubscriberService(builder.Configuration)
                 .AddEventHandler<OrderCreatedEvent, OrderCreatedEventHandler>()
                 .AddEventHandler<ProductPriceUpdatedEvent, ProductPriceUpdatedEventHandler>();
+builder.Services.AddOpenTelemetryTracing("Basket", builder.Configuration);
 
 builder.Services.AddRedisCache(builder.Configuration);
 
