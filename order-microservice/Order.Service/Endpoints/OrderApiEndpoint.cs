@@ -33,6 +33,9 @@ public static class OrderApiEndpoint
             var orderCounter = metricFactory.Counter("total-orders", "Orders");
             orderCounter.Add(1);
 
+            var productsPerOrderHistorigram = metricFactory.Histogram("products-per-order", "Products");
+            productsPerOrderHistorigram.Record(order.OrderProducts.DistinctBy(p => p.ProductId).Count());
+
             await eventBus.PublishAsync(new OrderCreatedEvent(customerId));
 
             return TypedResults.Created($"{order.CustomerId}/{order.OrderId}");

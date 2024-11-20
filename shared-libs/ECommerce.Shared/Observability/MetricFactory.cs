@@ -6,6 +6,7 @@ public class MetricFactory
 {
     private readonly Meter _meter;
     private readonly Dictionary<string, Counter<int>> _cachedCounters = new();
+    private readonly Dictionary<string, Histogram<int>> _cachedHistogram = new();
 
     public MetricFactory(string meterName)
     {
@@ -20,5 +21,15 @@ public class MetricFactory
         _cachedCounters.Add(name, counter);
 
         return counter;
+    }
+
+    public Histogram<int> Histogram(string name, string? unit = null) 
+    {
+        if (_cachedHistogram.TryGetValue(name, out Histogram<int> value)) return value;
+
+        var histogram = _meter.CreateHistogram<int>(name, unit);
+        _cachedHistogram.Add(name, histogram);
+
+        return histogram;
     }
 }

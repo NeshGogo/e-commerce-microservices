@@ -1,5 +1,6 @@
 using ECommerce.Shared.Infrastructure.RabbitMq;
 using ECommerce.Shared.Observability;
+using OpenTelemetry.Metrics;
 using Order.Service.Endpoints;
 using Order.Service.Infrastructure.Data.EntityFramework;
 
@@ -11,7 +12,13 @@ builder.Services.AddSqlServerDatastore(builder.Configuration);
 builder.Services.AddRabbitMqEventBus(builder.Configuration);
 builder.Services.AddRabbitMqEventPublisher();
 builder.Services.AddOpenTelemetryTracing(serviceName, builder.Configuration, (tracing) => tracing.WithSqlInstrumentation())
-                .AddOpenTelemetryMetrics(serviceName, builder.Services);
+                .AddOpenTelemetryMetrics(serviceName, builder.Services, (metricBuilder) =>
+                {
+                    metricBuilder.AddView("products-per-order", new ExplicitBucketHistogramConfiguration
+                    {
+                        Boundaries = [1, 2, 5, 10]
+                    });
+                });
     
 
 var app = builder.Build();

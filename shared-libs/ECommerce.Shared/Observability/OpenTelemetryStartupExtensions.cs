@@ -43,7 +43,7 @@ public static class OpenTelemetryStartupExtensions
         builder.AddSqlClientInstrumentation();
 
     public static OpenTelemetryBuilder AddOpenTelemetryMetrics(this OpenTelemetryBuilder openTelemetryBuilder, 
-            string serviceMame, IServiceCollection services)
+            string serviceMame, IServiceCollection services, Action<MeterProviderBuilder>? customMetrics = null)
     {
         services.AddSingleton(new MetricFactory(serviceMame));
 
@@ -52,6 +52,8 @@ public static class OpenTelemetryStartupExtensions
             builder.AddConsoleExporter()
                    .AddAspNetCoreInstrumentation()
                    .AddMeter(serviceMame);
+
+            customMetrics?.Invoke(builder);
         });
     } 
         
