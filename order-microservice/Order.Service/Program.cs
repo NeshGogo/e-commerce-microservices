@@ -8,8 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSqlServerDatastore(builder.Configuration);
 builder.Services.AddRabbitMqEventBus(builder.Configuration);
 builder.Services.AddRabbitMqEventPublisher();
-builder.Services.AddOpenTelemetryTracing("Order", builder.Configuration, 
-    (tracing) => tracing.WithSqlInstrumentation());
+builder.Services.AddOpenTelemetryTracing("Order", builder.Configuration, (tracing) => tracing.WithSqlInstrumentation())
+                .AddOpenTelemetryMetrics();
+    
 
 var app = builder.Build();
 
