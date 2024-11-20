@@ -42,10 +42,17 @@ public static class OpenTelemetryStartupExtensions
     public static TracerProviderBuilder WithSqlInstrumentation(this TracerProviderBuilder builder) =>
         builder.AddSqlClientInstrumentation();
 
-    public static OpenTelemetryBuilder AddOpenTelemetryMetrics(this OpenTelemetryBuilder openTelemetryBuilder) => 
-        openTelemetryBuilder.WithMetrics(builder =>
+    public static OpenTelemetryBuilder AddOpenTelemetryMetrics(this OpenTelemetryBuilder openTelemetryBuilder, 
+            string serviceMame, IServiceCollection services)
+    {
+        services.AddSingleton(new MetricFactory(serviceMame));
+
+        return openTelemetryBuilder.WithMetrics(builder =>
         {
             builder.AddConsoleExporter()
-                   .AddAspNetCoreInstrumentation();
+                   .AddAspNetCoreInstrumentation()
+                   .AddMeter(serviceMame);
         });
+    } 
+        
 }

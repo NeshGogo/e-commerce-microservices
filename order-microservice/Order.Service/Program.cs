@@ -5,11 +5,13 @@ using Order.Service.Infrastructure.Data.EntityFramework;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var serviceName = "Order";
+
 builder.Services.AddSqlServerDatastore(builder.Configuration);
 builder.Services.AddRabbitMqEventBus(builder.Configuration);
 builder.Services.AddRabbitMqEventPublisher();
-builder.Services.AddOpenTelemetryTracing("Order", builder.Configuration, (tracing) => tracing.WithSqlInstrumentation())
-                .AddOpenTelemetryMetrics();
+builder.Services.AddOpenTelemetryTracing(serviceName, builder.Configuration, (tracing) => tracing.WithSqlInstrumentation())
+                .AddOpenTelemetryMetrics(serviceName, builder.Services);
     
 
 var app = builder.Build();
