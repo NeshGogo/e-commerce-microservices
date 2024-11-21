@@ -29,6 +29,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.RegisterEndpoints();
+app.UsePrometheusExporter();
 
 app.Run();
 
