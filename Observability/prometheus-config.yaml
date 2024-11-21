@@ -3,8 +3,5 @@ global:
   evaluation_interval: 10s
 scrape_configs:
   - job_name: "Order"
-    scheme: https
     static_configs:
       - targets: ["host.docker.internal:8001"]
-    tls_config:
-        insecure_skip_verify: true
