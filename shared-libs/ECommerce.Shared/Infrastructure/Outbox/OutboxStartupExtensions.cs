@@ -26,5 +26,7 @@ public static class OutboxStartupExtensions
                     maxRetryDelay: TimeSpan.FromSeconds(40),
                     errorNumbersToAdd: [0]);
             }));
+
+        services.AddScoped<IOutboxStore, OutboxContext>();
     }
 }

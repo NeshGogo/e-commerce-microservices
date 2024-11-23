@@ -1,6 +1,6 @@
 ﻿namespace ECommerce.Shared.Infrastructure.Outbox;
 
-public class OutBoxEvent
+public class OutboxEvent
 {
     public Guid Id { get; set; }
     public required string EventType { get; set; }

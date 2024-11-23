@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ECommerce.Shared.Infrastructure.Outbox
 {
-    public class OutboxEventConfiguration : IEntityTypeConfiguration<OutBoxEvent>
+    public class OutboxEventConfiguration : IEntityTypeConfiguration<OutboxEvent>
     {
-        public void Configure(EntityTypeBuilder<OutBoxEvent> builder)
+        public void Configure(EntityTypeBuilder<OutboxEvent> builder)
         {
             builder.HasKey(o => o.Id);
             builder.Property(o => o.EventType).IsRequired();
