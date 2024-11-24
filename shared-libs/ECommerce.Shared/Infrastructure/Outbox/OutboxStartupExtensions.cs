@@ -17,6 +17,10 @@ public static class OutboxStartupExtensions
 
     public static void AddOutbox(this IServiceCollection services, IConfigurationManager configuration)
     {
+        OutboxOptions outboxOptions = new();
+        configuration.GetSection(OutboxOptions.OutboxSectionName).Bind(outboxOptions);
+        services.AddSingleton(outboxOptions);
+
         services.AddDbContext<OutboxContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("Default"),
             sqlServerOptionsAction: sqlOptions =>
@@ -28,5 +32,6 @@ public static class OutboxStartupExtensions
             }));
 
         services.AddScoped<IOutboxStore, OutboxContext>();
+        services.AddHostedService<OutboxBackgroundService>();
     }
 }
