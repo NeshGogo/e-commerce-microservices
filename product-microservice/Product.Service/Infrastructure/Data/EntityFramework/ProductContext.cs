@@ -5,7 +5,7 @@ namespace Product.Service.Infrastructure.Data.EntityFramework;
 
 internal class ProductContext : DbContext, IProductStore
 {
-    public ProductContext(DbContextOptions options) 
+    public ProductContext(DbContextOptions<ProductContext> options) 
         : base(options)
     {        
     }
@@ -31,7 +31,7 @@ internal class ProductContext : DbContext, IProductStore
             existingProduct.Name = product.Name;
             existingProduct.Price = product.Price;
             existingProduct.Description = product.Description;
-            await SaveChangesAsync();
+            await SaveChangesAsync(acceptAllChangesOnSuccess: false);
         }
     }
 
