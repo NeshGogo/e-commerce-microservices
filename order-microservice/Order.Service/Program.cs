@@ -1,3 +1,4 @@
+using ECommerce.Shared.Infrastructure.Outbox;
 using ECommerce.Shared.Infrastructure.RabbitMq;
 using ECommerce.Shared.Observability;
 using OpenTelemetry.Metrics;
@@ -19,6 +20,7 @@ builder.Services.AddOpenTelemetryTracing(serviceName, builder.Configuration, (tr
                         Boundaries = [1, 2, 5, 10]
                     });
                 });
+builder.Services.AddOutbox(builder.Configuration);
     
 
 var app = builder.Build();
@@ -26,6 +28,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MigrateDatabase();
+    app.ApplyOutboxMigrations();
 }
 
 app.RegisterEndpoints();

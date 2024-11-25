@@ -4,7 +4,7 @@ namespace Order.Service.Infrastructure.Data.EntityFramework;
 
 internal class OrderContext : DbContext, IOrderStore
 {
-    public OrderContext(DbContextOptions options) 
+    public OrderContext(DbContextOptions<OrderContext> options) 
         : base(options)
     {
     }
@@ -14,7 +14,7 @@ internal class OrderContext : DbContext, IOrderStore
     public async Task CreateOrderAsync(Models.Order order)
     {
         Orders.Add(order);
-        await SaveChangesAsync();
+        await SaveChangesAsync(acceptAllChangesOnSuccess: false);
     }
 
     public async Task<Models.Order?> GetCustomerOrderByIdAsync(string customerId, string orderId) =>
