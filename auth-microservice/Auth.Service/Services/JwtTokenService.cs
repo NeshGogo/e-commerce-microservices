@@ -27,7 +27,7 @@ public class JwtTokenService : ITokenService
 
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthenticationExtensions.SecurityKey));
         var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-        var expirationTimeStamp = DateTime.Now.AddMinutes(5);
+        var expirationTimeStamp = DateTime.Now.AddMinutes(15);
 
         List<Claim> claims = [
             new Claim(JwtRegisteredClaimNames.Name, userName)

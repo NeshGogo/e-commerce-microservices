@@ -1,3 +1,4 @@
+using Auth.Service.Endpoints;
 using Auth.Service.Infrastructure.Data.EntityFramework;
 using Auth.Service.Services;
 
@@ -13,6 +14,6 @@ if (app.Environment.IsDevelopment())
     app.MigrateDatabase();
 }
 
-app.MapGet("/", () => "Hello World!");
+app.RegisterEndpoints();
 
 app.Run();
