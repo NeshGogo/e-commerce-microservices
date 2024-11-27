@@ -11,12 +11,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(u => u.Id);
         builder.Property(u => u.Username).IsRequired();
         builder.Property(u => u.Password).IsRequired();
+        builder.Property(u => u.Role).IsRequired();
         builder.HasData(
             new User
             {
                 Id = Guid.NewGuid(),
                 Username = "neshgogo@test.com",
-                Password = "Password123!"
+                Password = "Password123!",
+                Role = "Administrator"
             });
     }
 }

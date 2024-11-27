@@ -30,7 +30,8 @@ public class JwtTokenService : ITokenService
         var expirationTimeStamp = DateTime.Now.AddMinutes(15);
 
         List<Claim> claims = [
-            new Claim(JwtRegisteredClaimNames.Name, userName)
+            new Claim(JwtRegisteredClaimNames.Name, userName),
+            new Claim("user_role", user.Role)
         ];
 
         JwtSecurityToken tokenOptions = new(
