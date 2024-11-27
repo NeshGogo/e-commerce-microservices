@@ -39,7 +39,7 @@ public static class ProductApiEndpoints
             await productStore.CreateProduct(product);
 
             return TypedResults.Created(product.Id.ToString());
-        });
+        }).RequireAuthorization();
 
         endpoint.MapPut("{productId}", async Task<IResult> (IProductStore productStore, IOutboxStore outboxStore,
             int productId, UpdateProductRequest request) =>
@@ -71,6 +71,6 @@ public static class ProductApiEndpoints
             });            
 
             return TypedResults.NoContent();
-        });
+        }).RequireAuthorization();
     }
 }

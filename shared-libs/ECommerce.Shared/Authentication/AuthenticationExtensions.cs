@@ -28,7 +28,7 @@ public static class AuthenticationExtensions
             {
                 ValidateIssuer = true,
                 ValidIssuer = authOptions.AuthMicroserviceBaseAddress,
-                ValidateAudience = true,
+                ValidateAudience = false,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecurityKey))
             };
