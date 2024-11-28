@@ -3,6 +3,7 @@ using Basket.Service.Infrastructure.Data;
 using Basket.Service.Infrastructure.Redis;
 using Basket.Service.IntegrationEvents;
 using Basket.Service.IntegrationEvents.Handlers;
+using ECommerce.Shared.Authentication;
 using ECommerce.Shared.Infrastructure.EventBus;
 using ECommerce.Shared.Infrastructure.RabbitMq;
 using ECommerce.Shared.Observability;
@@ -17,8 +18,11 @@ builder.Services.AddRabbitMqEventBus(builder.Configuration)
 builder.Services.AddOpenTelemetryTracing("Basket", builder.Configuration);
 
 builder.Services.AddRedisCache(builder.Configuration);
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseJwtAuthentication();
 
 app.RegisterEndpoints();
 

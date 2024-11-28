@@ -10,15 +10,15 @@ public static class BasketApiEndpoints
 {
     public static void RegisterEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("{customerId}", GetBasket);
+        app.MapGet("{customerId}", GetBasket).RequireAuthorization();
 
-        app.MapPost("{customerId}", CreateBasket);
+        app.MapPost("{customerId}", CreateBasket).RequireAuthorization();
 
-        app.MapPut("{customerId}", AddBasketProduct);
+        app.MapPut("{customerId}", AddBasketProduct).RequireAuthorization();
 
-        app.MapDelete("{customerId}/{productId}", DeleteBasketProduct);
+        app.MapDelete("{customerId}/{productId}", DeleteBasketProduct).RequireAuthorization();
 
-        app.MapDelete("{customerId}", DeleteBasket);
+        app.MapDelete("{customerId}", DeleteBasket).RequireAuthorization();
     }
 
     internal static  async Task<CustomerBasket> GetBasket(string customerId, [FromServices] IBasketStore basketStore) => 
