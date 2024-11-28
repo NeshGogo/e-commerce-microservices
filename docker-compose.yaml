@@ -80,3 +80,11 @@ services:
       - "8003:8080"
     environment:
       - "ASPNETCORE_ENVIRONMENT=Development"
+
+gateway:
+  container_name: gateway
+  build:
+    context: .
+    dockerfile: ./api-gateway/ApiGateway/Dockerfile
+  ports:
+    - "8004:8080"
