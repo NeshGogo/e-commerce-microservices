@@ -60,6 +60,22 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
+    },
+    {
+      "UpstreamPathTemplate": "/basket/{everything}",
+      "UpstreamHttpMethod": [ "Post", "Get", "Delete", "Put" ],
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DangerousAcceptAnyServerCertificateValidator": false,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 8000
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
     }
   ]
 }
