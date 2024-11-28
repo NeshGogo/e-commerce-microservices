@@ -1,3 +1,4 @@
+using ECommerce.Shared.Authentication;
 using ECommerce.Shared.Infrastructure.Outbox;
 using ECommerce.Shared.Infrastructure.RabbitMq;
 using ECommerce.Shared.Observability;
@@ -21,6 +22,7 @@ builder.Services.AddOpenTelemetryTracing(serviceName, builder.Configuration, (tr
                     });
                 });
 builder.Services.AddOutbox(builder.Configuration);
+builder.Services.AddJwtAuthentication(builder.Configuration);
     
 
 var app = builder.Build();
@@ -31,6 +33,7 @@ if (app.Environment.IsDevelopment())
     app.ApplyOutboxMigrations();
 }
 
+app.UseJwtAuthentication();
 app.RegisterEndpoints();
 app.UsePrometheusExporter();
 

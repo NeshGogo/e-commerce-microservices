@@ -48,7 +48,7 @@ public static class OrderApiEndpoint
             productsPerOrderHistorigram.Record(order.OrderProducts.DistinctBy(p => p.ProductId).Count());   
 
             return TypedResults.Created($"{order.CustomerId}/{order.OrderId}");
-        });
+        }).RequireAuthorization();
 
         routeBuilder.MapGet("/{customerId}/{orderId}", async Task<IResult>
         ([FromServices] IOrderStore orderStore,
@@ -60,7 +60,7 @@ public static class OrderApiEndpoint
               ? TypedResults.NotFound("Order not found for customer")
               : TypedResults.Ok(new GetOrderResponse(order.CustomerId, order.OrderId, order.OrderDate,
                 order.OrderProducts.Select(op => new GetOrderProductResponse(op.ProductId, op.Quantity)).ToList()));
-        });
+        }).RequireAuthorization();
 
     }
 }
