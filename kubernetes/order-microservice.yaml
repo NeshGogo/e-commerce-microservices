@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orderservice
+  template:
+    metadata:
+      labels:
+        app: orderservice
+    spec:
+      containers:
+        - name: orderservice
+          image: neshgogo/orderservice:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: RabbitMq__HostName
+              value: rabbitmq-clusterip-service
+            - name: ConnectionStrings__Default
+              value: Server=mssql-clusterip-service,1433;Database=Product;User Id=sa;Password=micR0S3rvice$;TrustServerCertificate=True
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: orderservice
+  ports:
+    - port: 8001
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: orderservice
+  ports:
+    - port: 8001
+      targetPort: 8080

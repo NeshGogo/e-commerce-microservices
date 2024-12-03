@@ -53,8 +53,8 @@
       "DangerousAcceptAnyServerCertificateValidator": false,
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
-          "Port": 8001
+          "Host": "order-clusterip-service",
+          "Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -69,8 +69,8 @@
       "DangerousAcceptAnyServerCertificateValidator": false,
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
-          "Port": 8000
+          "Host": "basket-clusterip-service",
+          "Port": 8080
         }
       ],
       "AuthenticationOptions": {
