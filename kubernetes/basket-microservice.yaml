@@ -23,7 +23,7 @@ spec:
             - name: RabbitMq__HostName
               value: rabbitmq-clusterip-service
             - name: Redis__Configuration
-              value: To-defined
+              value: redis-clusterip-service
 
 ---
 apiVersion: v1
